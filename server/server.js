@@ -1,5 +1,10 @@
-console.log('🔹 1. Loading dotenv...');
-require('dotenv').config();
+console.log('🔹 1. Checking environment...');
+if (process.env.NODE_ENV !== 'production') {
+    console.log('🔹 Loading dotenv for development...');
+    require('dotenv').config();
+} else {
+    console.log('🔹 Production environment detected. Skipping dotenv.');
+}
 
 console.log('🔹 2. Loading express...');
 const express = require('express');
@@ -55,10 +60,19 @@ app.get('/api/debug', async (req, res) => {
 // ——— Serverless DB Connection ———
 app.use(async (req, res, next) => {
     // 0 = disconnected, 1 = connected, 2 = connecting
-    if (require('mongoose').connection.readyState === 0) {
-        await connectDB();
+    try {
+        if (require('mongoose').connection.readyState === 0) {
+            await connectDB();
+        }
+        next();
+    } catch (error) {
+        console.error('❌ DB Connection Middleware Error:', error);
+        res.status(500).json({
+            error: 'Database Connection Failed',
+            message: error.message,
+            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+        });
     }
-    next();
 });
 
 // ——— Body Parsers ———
