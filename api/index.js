@@ -1,17 +1,22 @@
-// PROBE MODE: Testing if this file runs at all
-module.exports = (req, res) => {
-    console.log("🔹 PROBE: api/index.js is running!");
-    res.status(200).json({
-        status: "API Entry Point IS Working",
-        message: "If you see this, Vercel is fine. The crash is in server.js",
-        env: process.env.NODE_ENV,
-        node: process.version
-    });
-};
-
-/*
+// Lazy load server to catch initialization errors at runtime
 let app;
+
 module.exports = async (req, res) => {
-    // ... (Original Code)
+    try {
+        if (!app) {
+            console.log("🔹 api/index.js: Lazy loading server...");
+            app = require('../server/server.js');
+            console.log("✅ api/index.js: Server loaded successfully");
+        }
+        // Express app is a function (req, res) => void
+        return app(req, res);
+    } catch (error) {
+        console.error("❌ CRITICAL: Failed to load/run server.js", error);
+        res.status(500).json({
+            error: "Critical Server Initialization Failed",
+            message: error.message,
+            stack: error.stack,
+            type: error.code || "Unknown Error"
+        });
+    }
 };
-*/
