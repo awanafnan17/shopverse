@@ -1,10 +1,21 @@
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+// Safe Stripe Init
+let stripe;
+if (process.env.STRIPE_SECRET_KEY) {
+    stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+} else {
+    console.warn('⚠️ STRIPE_SECRET_KEY is missing. Payments will fail.');
+}
+
 const Order = require('../models/Order');
 const Payment = require('../models/Payment');
 
 // POST /api/payments/stripe — Create payment intent
 exports.createStripeIntent = async (req, res, next) => {
     try {
+        if (!stripe) {
+            return res.status(500).json({ message: 'Payment system not configured (Missing Stripe Key)' });
+        }
+
         const { amount, orderId } = req.body;
 
         const paymentIntent = await stripe.paymentIntents.create({
