@@ -26,13 +26,12 @@ const connectDB = async () => {
         }
 
         // Fallback for development only
-        console.log('⚠️  No MONGO_URI found. Starting in-memory MongoDB for development...');
-        const { MongoMemoryServer } = require('mongodb-memory-server');
-        const mongod = await MongoMemoryServer.create();
-        const uri = mongod.getUri();
-        await mongoose.connect(uri);
-        console.log(`✅ In-Memory MongoDB running at: ${uri}`);
-        console.log('   ⚡ Data will be lost when the server stops.');
+        console.warn('⚠️  No MONGO_URI found. Please set MONGO_URI in .env file.');
+        console.warn('   In production, the app will crash without a DB connection.');
+        console.warn('   In development, you can use a local MongoDB instance.');
+
+        // Return to avoid crashing immediately in dev if just testing UI
+        return;
     } catch (err) {
         console.error('❌ MongoDB Connection Error:', err.message);
         // Do NOT exit process in serverless environment, just throw
