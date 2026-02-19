@@ -15,7 +15,36 @@ app.use(cors({
     origin: true,
     credentials: true,
 }));
-app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 200 }));
+// ——— Health Check ———
+app.get('/api/health', (req, res) => {
+    res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+app.get('/api/debug', async (req, res) => {
+    const mongoose = require('mongoose');
+    try {
+        // Attempt connection manually if not connected
+        if (mongoose.connection.readyState === 0) {
+            await connectDB();
+        }
+        res.json({
+            status: 'ok',
+            env: {
+                mongo_uri_set: !!process.env.MONGO_URI,
+                node_env: process.env.NODE_ENV
+            },
+            db_state: mongoose.connection.readyState, // 1 = connected
+            host: mongoose.connection.host
+        });
+    } catch (err) {
+        res.status(500).json({
+            status: 'error',
+            error: err.message,
+            stack: err.stack,
+            mongo_uri_set: !!process.env.MONGO_URI
+        });
+    }
+});
 
 // ——— Serverless DB Connection ———
 app.use(async (req, res, next) => {
@@ -41,33 +70,6 @@ app.use('/api/orders', require('./routes/orders'));
 app.use('/api/payments', require('./routes/payments'));
 app.use('/api/reviews', require('./routes/reviews'));
 app.use('/api/admin', require('./routes/admin'));
-
-// ——— Health Check ———
-app.get('/api/health', (req, res) => {
-    res.json({ status: 'ok', timestamp: new Date().toISOString() });
-});
-
-app.get('/api/debug', async (req, res) => {
-    const mongoose = require('mongoose');
-    try {
-        await connectDB();
-        res.json({
-            status: 'ok',
-            env: {
-                mongo_uri_set: !!process.env.MONGO_URI,
-                node_env: process.env.NODE_ENV
-            },
-            db_state: mongoose.connection.readyState, // 1 = connected
-            host: mongoose.connection.host
-        });
-    } catch (err) {
-        res.status(500).json({
-            status: 'error',
-            error: err.message,
-            mongo_uri_set: !!process.env.MONGO_URI
-        });
-    }
-});
 
 // ——— Serve Production Frontend ———
 const clientDist = path.join(__dirname, '..', 'client', 'dist');

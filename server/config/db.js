@@ -35,9 +35,11 @@ const connectDB = async () => {
         console.log('   ⚡ Data will be lost when the server stops.');
     } catch (err) {
         console.error('❌ MongoDB Connection Error:', err.message);
+        // Do NOT exit process in serverless environment, just throw
         if (process.env.NODE_ENV === 'production') {
-            process.exit(1);
+            throw err;
         }
+        process.exit(1);
     }
 };
 
