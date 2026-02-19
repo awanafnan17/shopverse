@@ -1,19 +1,26 @@
+console.log('🔹 1. Loading dotenv...');
 require('dotenv').config();
+
+console.log('🔹 2. Loading express...');
 const express = require('express');
+
+console.log('🔹 3. Loading cors...');
 const cors = require('cors');
-const helmet = require('helmet');
-const rateLimit = require('express-rate-limit');
+
+console.log('🔹 4. Loading path...');
 const path = require('path');
+
+console.log('🔹 5. Loading db config...');
 const connectDB = require('./config/db');
+
+console.log('🔹 6. Loading error handler...');
 const errorHandler = require('./middleware/errorHandler');
 
+console.log('🚀 Server Modules Loaded...');
 const app = express();
-
-console.log('🚀 Server Initializing...');
 
 // ——— Security ———
 app.use(cors({ origin: true, credentials: true }));
-// app.use(helmet()); // Temporarily disabled for debugging
 // ——— Health Check ———
 app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
