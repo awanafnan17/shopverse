@@ -9,12 +9,11 @@ const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
 
+console.log('🚀 Server Initializing...');
+
 // ——— Security ———
-app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' }, contentSecurityPolicy: false }));
-app.use(cors({
-    origin: true,
-    credentials: true,
-}));
+app.use(cors({ origin: true, credentials: true }));
+// app.use(helmet()); // Temporarily disabled for debugging
 // ——— Health Check ———
 app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
