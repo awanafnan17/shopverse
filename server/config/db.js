@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 
 const connectDB = async () => {
+    // 0 = disconnected, 1 = connected, 2 = connecting
+    if (mongoose.connection.readyState >= 1) {
+        return;
+    }
+
     try {
         if (!process.env.MONGO_URI && process.env.NODE_ENV === 'production') {
             throw new Error('MONGO_URI is required in production mode');

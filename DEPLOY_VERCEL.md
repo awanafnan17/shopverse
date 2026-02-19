@@ -45,3 +45,11 @@ You still need a permanent database.
 3.  Get the Connection String and add it to Vercel Environment Variables.
 
 **That's it! Your site will be online at something like `shopverse.vercel.app`.** 🚀
+
+---
+
+## ⚠️ Troubleshooting "Registration Failed"
+If you see **"Registration Failed"**, it means Vercel cannot connect to your database.
+1.  Go to Vercel Dashboard → **Settings** → **Environment Variables**.
+2.  Make sure `MONGO_URI` is added and correct.
+3.  After adding variables, you **MUST Redeploy** (Go to **Deployments** → Click top 3 dots → **Redeploy**).

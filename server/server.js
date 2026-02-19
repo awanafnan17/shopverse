@@ -17,6 +17,15 @@ app.use(cors({
 }));
 app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 200 }));
 
+// ——— Serverless DB Connection ———
+app.use(async (req, res, next) => {
+    // 0 = disconnected, 1 = connected, 2 = connecting
+    if (require('mongoose').connection.readyState === 0) {
+        await connectDB();
+    }
+    next();
+});
+
 // ——— Body Parsers ———
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
