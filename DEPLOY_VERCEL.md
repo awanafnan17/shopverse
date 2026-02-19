@@ -42,7 +42,8 @@ git push -u origin main
 You still need a permanent database.
 1.  Go to [MongoDB Atlas](https://www.mongodb.com/cloud/atlas).
 2.  Create a FREE cluster.
-3.  Get the Connection String and add it to Vercel Environment Variables.
+3.  **IMPORTANT: Go to "Network Access" (in the sidebar) → Click "Add IP Address" → Select "Allow Access from Anywhere" (0.0.0.0/0).**
+4.  Get the Connection String and add it to Vercel Environment Variables.
 
 **That's it! Your site will be online at something like `shopverse.vercel.app`.** 🚀
 

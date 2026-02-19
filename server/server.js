@@ -47,6 +47,28 @@ app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+app.get('/api/debug', async (req, res) => {
+    const mongoose = require('mongoose');
+    try {
+        await connectDB();
+        res.json({
+            status: 'ok',
+            env: {
+                mongo_uri_set: !!process.env.MONGO_URI,
+                node_env: process.env.NODE_ENV
+            },
+            db_state: mongoose.connection.readyState, // 1 = connected
+            host: mongoose.connection.host
+        });
+    } catch (err) {
+        res.status(500).json({
+            status: 'error',
+            error: err.message,
+            mongo_uri_set: !!process.env.MONGO_URI
+        });
+    }
+});
+
 // ——— Serve Production Frontend ———
 const clientDist = path.join(__dirname, '..', 'client', 'dist');
 app.use(express.static(clientDist));
