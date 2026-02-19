@@ -141,9 +141,7 @@ const startServer = async () => {
 // Only start server if not in test/production (Vercel)
 if (require.main === module) {
     startServer();
-} else {
-    // For Vercel/Serverless: Connect immediately
-    connectDB();
 }
+// For Vercel, we rely on the middleware to connect
 
 module.exports = app;
