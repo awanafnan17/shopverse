@@ -92,12 +92,25 @@ const autoSeed = async () => {
     console.log('   User:  user@shopverse.com / user123');
 };
 
-connectDB().then(async () => {
-    await autoSeed();
-    app.listen(PORT, () => {
-        console.log(`🚀 Server running on http://localhost:${PORT}`);
-    });
-}).catch((err) => {
-    console.error('Failed to connect to DB:', err);
-    process.exit(1);
-});
+const startServer = async () => {
+    try {
+        await connectDB();
+        await autoSeed();
+        app.listen(PORT, () => {
+            console.log(`🚀 Server running on http://localhost:${PORT}`);
+        });
+    } catch (err) {
+        console.error('Failed to connect to DB:', err);
+        process.exit(1);
+    }
+};
+
+// Only start server if not in test/production (Vercel)
+if (require.main === module) {
+    startServer();
+} else {
+    // For Vercel/Serverless: Connect immediately
+    connectDB();
+}
+
+module.exports = app;
