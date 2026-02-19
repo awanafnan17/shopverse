@@ -71,14 +71,20 @@ app.use('/api/payments', require('./routes/payments'));
 app.use('/api/reviews', require('./routes/reviews'));
 app.use('/api/admin', require('./routes/admin'));
 
+const fs = require('fs');
+
 // ——— Serve Production Frontend ———
 const clientDist = path.join(__dirname, '..', 'client', 'dist');
-app.use(express.static(clientDist));
 
-// SPA catch-all: any non-API route serves index.html
-app.get(/^(?!\/api).*/, (req, res) => {
-    res.sendFile(path.join(clientDist, 'index.html'));
-});
+if (fs.existsSync(clientDist)) {
+    app.use(express.static(clientDist));
+    // SPA catch-all
+    app.get(/^(?!\/api).*/, (req, res) => {
+        res.sendFile(path.join(clientDist, 'index.html'));
+    });
+} else {
+    console.log('⚠️ Static files skipped (client/dist not found)');
+}
 
 // ——— Error Handler ———
 app.use(errorHandler);
