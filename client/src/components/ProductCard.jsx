@@ -19,7 +19,7 @@ const ProductCard = ({ product }) => {
     };
 
     const imageUrl = product.images?.[0]
-        ? (product.images[0].startsWith('http') ? product.images[0] : `http://localhost:5000${product.images[0]}`)
+        ? (product.images[0].startsWith('http') || product.images[0].startsWith('data:') ? product.images[0] : `http://localhost:5000${product.images[0]}`)
         : `https://placehold.co/400x400/1a1a2e/6c63ff?text=${encodeURIComponent(product.name?.slice(0, 12) || 'Product')}`;
 
     return (

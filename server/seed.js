@@ -43,6 +43,8 @@ const connectAndSeed = async () => {
             { name: 'Non-Stick Cookware Set', description: '10-piece ceramic non-stick cookware set including pots, pans, and lids. Dishwasher safe with cool-touch handles.', price: 149.99, category: cats[2]._id, stock: 15, ratings: 4.1, numReviews: 45, featured: true, images: [] },
             { name: 'The Art of Programming', description: 'Comprehensive guide to modern software development practices, clean code principles, and system design patterns.', price: 39.99, category: cats[3]._id, stock: 75, ratings: 4.9, numReviews: 421, featured: true, images: [] },
             { name: 'Yoga Mat Premium', description: 'Extra-thick 6mm yoga mat with non-slip surface and alignment guides. Eco-friendly TPE material.', price: 45.99, category: cats[4]._id, stock: 80, ratings: 4.5, numReviews: 156, featured: false, images: [] },
+            { name: 'High-Performance Blender', description: 'Professional grade smoothie blender with 1200W motor. Crushes ice and frozen fruit in seconds.', price: 89.99, category: cats[2]._id, stock: 45, ratings: 4.7, numReviews: 112, featured: true, images: [] },
+            { name: 'Yoga Foam Roller', description: 'High-density foam roller for muscle recovery and deep tissue massage. Essential for post-workout relief.', price: 19.99, category: cats[4]._id, stock: 120, ratings: 4.6, numReviews: 88, featured: false, images: [] },
         ]);
 
         console.log('\n✅ Database seeded successfully!');

@@ -1,15 +1,11 @@
 const Product = require('../models/Product');
 const Category = require('../models/Category');
 const multer = require('multer');
-const { v4: uuidv4 } = require('uuid');
 const path = require('path');
 const mongoose = require('mongoose');
 
-// Multer config
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => cb(null, path.join(__dirname, '..', 'uploads')),
-    filename: (req, file, cb) => cb(null, `${uuidv4()}${path.extname(file.originalname)}`),
-});
+// Multer config — use memory storage for Vercel (read-only filesystem)
+const storage = multer.memoryStorage();
 const upload = multer({
     storage,
     limits: { fileSize: 5 * 1024 * 1024 },
@@ -22,6 +18,12 @@ const upload = multer({
 });
 
 exports.uploadImages = upload.array('images', 5);
+
+// Helper: convert multer file buffers to Base64 data URLs
+const filesToDataUrls = (files) => {
+    if (!files || files.length === 0) return [];
+    return files.map(f => `data:${f.mimetype};base64,${f.buffer.toString('base64')}`);
+};
 
 // GET /api/products
 exports.getProducts = async (req, res, next) => {
@@ -82,7 +84,7 @@ exports.getProduct = async (req, res, next) => {
 exports.createProduct = async (req, res, next) => {
     try {
         const { name, description, price, category, stock, featured } = req.body;
-        const images = req.files ? req.files.map(f => `/uploads/${f.filename}`) : [];
+        const images = filesToDataUrls(req.files);
         const product = await Product.create({ name, description, price, category, stock, images, featured });
         res.status(201).json(product);
     } catch (err) { next(err); }
@@ -96,7 +98,7 @@ exports.updateProduct = async (req, res, next) => {
 
         Object.assign(product, req.body);
         if (req.files && req.files.length > 0) {
-            product.images = req.files.map(f => `/uploads/${f.filename}`);
+            product.images = filesToDataUrls(req.files);
         }
         await product.save();
         res.json(product);
